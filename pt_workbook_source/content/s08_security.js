@@ -171,11 +171,11 @@ const slides = [
   },
   {
     title: 'How to publish an internal server with static NAT',
-    tag: 'LAB 6',
+    tag: 'LAB 6', reveal: true,
     goal: 'A permanent one-to-one mapping lets Internet users reach the internal web server at a public address.',
     async render(s, { K, P }) {
       K.commandTable(s, {
-        y: 1.82, device: 'R1', title: 'static nat', maxBottom: 3.3,
+        y: 1.82, device: 'R1', title: 'static nat', maxBottom: 3.3, reveal: true,
         rows: [
           { p: 'R1(config)#', c: 'ip nat inside source static 192.168.10.100 203.0.113.5', m: 'Internet users who browse to 203.0.113.5 reach WEB-INT (192.168.10.100), and its replies leave as 203.0.113.5.' },
           { p: 'R1#', c: 'show ip nat translations', m: 'Show the NAT table (below).' },
@@ -187,7 +187,7 @@ const slides = [
       });
       const cards = [['Inside local', 'The private address of the inside host, e.g. 192.168.10.100.'], ['Inside global', 'The public address it becomes on the Internet, e.g. 203.0.113.5.'], ['Outside local / global', 'The Internet host — the same in this lab: 198.51.100.10.']];
       cards.forEach(([h, b], i) => K.card(s, { x: 0.6 + i * 4.14, y: 4.88, w: 3.85, h: 1.0, head: h, body: [b], pt: 13, headPt: 14, pad: 0.13 }));
-      await K.checkWatch(s, { check: 'From the Internet server’s side, browse http://203.0.113.5: the WEB-INT page appears.', watch: 'Use a public address no other device uses — here one from R1’s ISP subnet (203.0.113.0/29).', title: 'static nat' });
+      await K.checkWatch(s, { check: 'From the Internet server’s side, browse http://203.0.113.5: the WEB-INT page appears.', watch: 'Use a public address no other device uses — here one from R1’s ISP subnet (203.0.113.0/29).', title: 'static nat', reveal: true });
     },
     notes: 'Static NAT is two-way and permanent; PAT entries appear only while a conversation is active. Clear dynamic entries with clear ip nat translation * if trainees want to watch them appear again.',
   },

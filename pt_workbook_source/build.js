@@ -23,6 +23,9 @@ const THEME = {
 };
 
 // Sections in order. Each content module exports { section, slides }.
+const REVEAL_NOTE = 'Click-to-reveal: each click shows the next explanation; the last click shows Check it and Watch out. Before each click, ask a trainee to predict what the command does.';
+const REVEAL_ROWS_NOTE = 'Click-to-reveal: each click shows the next explanation. Before each click, ask a trainee to predict what the command does.';
+
 const SECTION_FILES = ['s01_pt', 's02_ios', 's03_setup', 's04_vlan', 's05_intervlan', 's06_dhcp', 's07_routing', 's08_security', 's09_stp', 's10_mgmt', 's11_trouble', 's12_practice'];
 const SECTIONS = (process.env.ONLY ? process.env.ONLY.split(',') : SECTION_FILES).map((f) => require('./content/' + f));
 
@@ -100,12 +103,14 @@ async function main() {
       await K.homeButton(s);
       if (spec.goal) K.goal(s, spec.goal);
       if (spec.type === 'command') {
-        K.commandTable(s, { ...spec, title: spec.title });
-        await K.checkWatch(s, { check: spec.check, watch: spec.watch, tip: spec.tip, title: spec.title });
+        K.commandTable(s, { ...spec, title: spec.title, reveal: true });
+        await K.checkWatch(s, { check: spec.check, watch: spec.watch, tip: spec.tip, title: spec.title, reveal: true });
       } else {
         await spec.render(s, { pres, K, P, C });
       }
-      if (spec.notes) s.addNotes(spec.notes);
+      const revealNote = spec.reveal === 'rows' ? REVEAL_ROWS_NOTE : spec.type === 'command' || spec.reveal ? REVEAL_NOTE : null;
+      const notes = [spec.notes, revealNote].filter(Boolean).join('\n\n');
+      if (notes) s.addNotes(notes);
     }
   }
   pres.addSection({ title: 'Close' });
@@ -114,6 +119,8 @@ async function main() {
   await pres.writeFile({ fileName: OUT });
   const fixed = await require('./lib/fixparas').fixParagraphs(OUT);
   console.log(`Removed ${fixed} stray paragraph-property blocks`);
+  const reveals = await require('./lib/animate').addReveals(OUT);
+  console.log(`Click-to-reveal added to ${reveals.length} slides (${reveals.reduce((a, r) => a + r.clicks, 0)} clicks)`);
   await require('./lib/theme').writeTheme(OUT, THEME);
   console.log(`Wrote ${OUT} — ${total} slides`);
   if (K.warnings.length) console.log('WARNINGS:\n  ' + K.warnings.join('\n  '));

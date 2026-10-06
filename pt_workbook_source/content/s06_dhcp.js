@@ -106,7 +106,7 @@ const slides = [
   },
   {
     title: 'How to relay DHCP from another subnet (ip helper-address)',
-    tag: 'LAB 4',
+    tag: 'LAB 4', reveal: 'rows',
     goal: 'The LIBRARY LAN (192.168.40.0/24) gets its addresses from SRV2, a DHCP server in another subnet.',
     async render(s, { K, P }) {
       const y = 2.6, pc = 1.2, r = 6.2, sv = 11.3;
@@ -124,7 +124,7 @@ const slides = [
       K.tag(s, 'G0/0/0  .50.1', r + 0.4, y + 0.05, { w: 1.3, pt: 11, color: P.text, align: 'left' });
       K.tag(s, 'SERVER LAN 192.168.50.0/24', r + 1.7, y + 0.05, { w: 3.0, pt: 11, color: P.muted });
       K.commandTable(s, {
-        y: 3.35, device: 'R1', title: 'relay table', maxBottom: 5.3,
+        y: 3.35, device: 'R1', title: 'relay table', maxBottom: 5.3, reveal: true,
         rows: [
           { lines: [{ p: 'R1(config)#', c: 'interface g0/0/2' }, { p: 'R1(config-if)#', c: 'ip address 192.168.40.1 255.255.255.0' }, { p: 'R1(config-if)#', c: 'no shutdown' }], m: 'The LIBRARY port — the clients’ gateway. (On a 4331, add a GLC-T module to G0/0/2 first.)' },
           { p: 'R1(config-if)#', c: 'ip helper-address 192.168.50.11', m: 'Routers drop broadcasts. This catches the DHCP broadcast and forwards it to SRV2, stamped with 192.168.40.1 so SRV2 picks the right pool.' },

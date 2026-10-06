@@ -84,21 +84,28 @@ function goal(slide, text, y = 1.27) {
   });
 }
 
-// Command table: dark "terminal" column with prompt + command, light column with the meaning.
+// Command rows: dark "terminal" cells (prompt + command, always visible) and light "What it does"
+// cells. Each cell is its own shape, sized from real font metrics, so that with o.reveal the
+// meaning cells can be brought in one click at a time (shapes named "Reveal NN"; see animate.js).
+const M = require('./measure');
+const PT_IN = 1 / 72;
+function measureRuns(list) {
+  return list.map((r) => ({ text: r.text, mono: r.options && r.options.fontFace === CODE, bold: !!(r.options && r.options.bold), pt: (r.options && r.options.fontSize) || 14 }));
+}
 function commandTable(slide, o) {
   const x = o.x ?? MX, y = o.y ?? 1.82, w = o.w ?? CW, codeW = o.codeW ?? 6.75;
   const meanW = w - codeW;
   const codePt = o.codePt || 12, meanPt = o.meanPt || 14;
-  const rows = [];
-  rows.push([
-    { text: [
-      { text: '●  ', options: { color: P.red } }, { text: '●  ', options: { color: P.gold } }, { text: '●   ', options: { color: P.dotGreen } },
-      { text: o.headerLeft || `${o.device || 'R1'}  —  type the white text, then press Enter`, options: { color: P.headGray, bold: true, fontFace: 'Calibri' } },
-    ], options: { fill: { color: P.deep }, fontSize: 11, valign: 'middle', fontFace: 'Calibri' } },
-    { text: o.headerRight || 'What it does', options: { fill: { color: P.tint }, color: P.dark, bold: true, fontSize: 12, valign: 'middle' } },
-  ]);
-  let estH = 0.34;
+  const padX = 0.12, padY = 0.05, hdrH = 0.34, sep = 0.02;
+  const margin = [padX / PT_IN, padX / PT_IN, padY / PT_IN, padY / PT_IN]; // points: left, right, bottom, top
+  slide.addText([
+    { text: '●  ', options: { color: P.red } }, { text: '●  ', options: { color: P.gold } }, { text: '●   ', options: { color: P.dotGreen } },
+    { text: o.headerLeft || `${o.device || 'R1'}  —  type the white text, then press Enter`, options: { color: P.headGray, bold: true } },
+  ], { shape: 'rect', x, y, w: codeW - sep, h: hdrH, fill: { color: P.deep }, line: { type: 'none' }, fontSize: 11, valign: 'middle', margin, objectName: 'Command header' });
+  slide.addText(o.headerRight || 'What it does', { shape: 'rect', x: x + codeW, y, w: meanW, h: hdrH, fill: { color: P.tint }, line: { type: 'none' }, color: P.dark, bold: true, fontSize: 12, valign: 'middle', margin, objectName: 'Meaning header' });
+  let cy = y + hdrH + sep;
   o.rows.forEach((r, idx) => {
+    const nn = String(idx + 1).padStart(2, '0');
     const lines = r.lines || [{ p: r.p, c: r.c, comment: r.comment }];
     const codeRuns = [];
     let codeLines = 0;
@@ -106,26 +113,23 @@ function commandTable(slide, o) {
       const last = i === lines.length - 1;
       if (ln.p) codeRuns.push({ text: ln.p + ' ', options: { color: P.prompt, bold: false } });
       codeRuns.push({ text: ln.c, options: { color: ln.comment ? P.comment : P.white, bold: !ln.comment, italic: !!ln.comment, breakLine: !last } });
-      codeLines += lineCount((ln.p ? ln.p + ' ' : '') + ln.c, codeW - 0.24, codePt, true);
+      codeLines += M.lineCount([{ text: (ln.p ? ln.p + ' ' : '') + ln.c, mono: true, bold: true, pt: codePt }], codeW - sep - 2 * padX);
     });
-    const meanLines = lineCount(r.m, meanW - 0.24, meanPt, false);
-    const rowH = Math.max(codeLines * codePt * 1.2, meanLines * meanPt * 1.22) / 72 + 0.13;
-    estH += rowH;
-    rows.push([
-      { text: codeRuns, options: { fill: { color: P.deep }, fontFace: CODE, fontSize: codePt, valign: 'middle' } },
-      { text: runs(r.m, { color: P.text, fontSize: meanPt }), options: { fill: { color: idx % 2 ? P.white : P.tint2 }, fontSize: meanPt, valign: 'middle' } },
-    ]);
-  });
-  slide.addTable(rows, {
-    x, y, w, colW: [codeW, meanW], rowH: [0.34], border: { type: 'solid', pt: 1.5, color: 'FFFFFF' },
-    margin: [0.06, 0.12, 0.06, 0.12], fontFace: 'Calibri', objectName: 'Command table',
+    const meanRuns = runs(r.m, { color: P.text, fontSize: meanPt });
+    const meanLines = M.lineCount(measureRuns(meanRuns), meanW - 2 * padX);
+    const rowH = Math.max(M.linesHeight(codeLines, 'mono', codePt), M.linesHeight(meanLines, 'body', meanPt)) + 2 * padY + 0.02;
+    slide.addText(codeRuns, { shape: 'rect', x, y: cy, w: codeW - sep, h: rowH, fill: { color: P.deep }, line: { type: 'none' }, fontFace: CODE, fontSize: codePt, valign: 'middle', margin, objectName: `Command ${nn}` });
+    slide.addText(meanRuns, { shape: 'rect', x: x + codeW, y: cy, w: meanW, h: rowH, fill: { color: idx % 2 ? P.white : P.tint2 }, line: { type: 'none' }, fontSize: meanPt, valign: 'middle', margin, objectName: o.reveal ? `Reveal ${nn} meaning` : `Meaning ${nn}` });
+    cy += rowH + sep;
   });
   const limit = o.maxBottom ?? 5.92;
-  if (y + estH > limit) warn(`${o.title || 'command table'}: estimated bottom ${(y + estH).toFixed(2)} > ${limit}`);
-  return y + estH;
+  if (cy > limit + 0.01) warn(`${o.title || 'command table'}: bottom ${cy.toFixed(2)} > ${limit}`);
+  if (process.env.SHOW_BOTTOMS) console.log(`  rows end at ${cy.toFixed(2)}  ${o.title || ''}`);
+  return cy;
 }
 
-// "Check it" and "Watch out" boxes along the bottom of a slide.
+// "Check it" and "Watch out" boxes along the bottom of a slide. With o.reveal they come in together
+// on the click after the last command (shapes named "Reveal 99 …").
 async function checkWatch(slide, o) {
   const y = o.y ?? 6.02, h = o.h ?? 0.82;
   const items = [];
@@ -134,6 +138,7 @@ async function checkWatch(slide, o) {
   if (o.tip) items.push({ kind: 'tip', text: o.tip });
   const gap = 0.3, ax = o.x ?? MX, aw = o.w ?? CW;
   const bw = (aw - gap * (items.length - 1)) / items.length;
+  const pt = o.size || 14;
   for (let i = 0; i < items.length; i++) {
     const it = items[i];
     const x = ax + i * (bw + gap);
@@ -142,13 +147,13 @@ async function checkWatch(slide, o) {
       watch: { fill: P.redTint, line: P.redBorder, label: 'Watch out:', color: P.darkRed, icon: 'FaExclamationTriangle', ic: P.darkRed },
       tip: { fill: P.blueTint, line: 'B8C9E0', label: 'Tip:', color: '1F4E8C', icon: 'FaLightbulb', ic: '1F4E8C' },
     }[it.kind];
-    slide.addShape('roundRect', { x, y, w: bw, h, fill: { color: sty.fill }, line: { color: sty.line, width: 1 }, rectRadius: 0.08, objectName: `${it.kind} box` });
-    slide.addImage({ data: await icon(sty.icon, sty.ic), x: x + 0.16, y: y + (h - 0.32) / 2, w: 0.32, h: 0.32, altText: sty.label });
-    slide.addText([{ text: sty.label + '  ', options: { bold: true, color: sty.color } }, ...runs(it.text, { color: P.text })], {
-      x: x + 0.6, y: y + 0.04, w: bw - 0.72, h: h - 0.08, fontSize: o.size || 14, valign: 'middle', margin: 0, isTextBox: true,
-    });
-    const lines = lineCount(sty.label + '  ' + it.text, bw - 0.72, o.size || 14, false);
-    if (lines * (o.size || 14) * 1.22 / 72 > h - 0.1) warn(`${o.title || ''} ${it.kind} box text may overflow (${lines} lines)`);
+    const name = (part) => (o.reveal ? `Reveal 99 ${it.kind} ${part}` : `${it.kind} ${part}`);
+    slide.addShape('roundRect', { x, y, w: bw, h, fill: { color: sty.fill }, line: { color: sty.line, width: 1 }, rectRadius: 0.08, objectName: name('box') });
+    slide.addImage({ data: await icon(sty.icon, sty.ic), x: x + 0.16, y: y + (h - 0.32) / 2, w: 0.32, h: 0.32, altText: sty.label, objectName: name('icon') });
+    const textRuns = [{ text: sty.label + '  ', options: { bold: true, color: sty.color, fontSize: pt } }, ...runs(it.text, { color: P.text, fontSize: pt })];
+    slide.addText(textRuns, { x: x + 0.6, y: y + 0.04, w: bw - 0.72, h: h - 0.08, fontSize: pt, valign: 'middle', margin: 0, isTextBox: true, objectName: name('text') });
+    const lines = M.lineCount(measureRuns(textRuns), bw - 0.72);
+    if (M.linesHeight(lines, 'body', pt) > h - 0.08) warn(`${o.title || ''} ${it.kind} box text overflows (${lines} lines)`);
   }
 }
 
