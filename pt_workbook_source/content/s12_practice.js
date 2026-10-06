@@ -70,7 +70,7 @@ const slides = [
   ),
   labSlide(
     'How to practise: challenge lab B — routing, NAT and security',
-    'Combine Lab 3 and Lab 4: OSPF inside, PAT to the ISP, and a security policy.',
+    'Combine Lab 3 and Lab 6: OSPF inside, PAT to the ISP, and a security policy.',
     miniLab3,
     [
       'Address all links (/30) and LANs; OSPF area 0 on R1, R2, R3.',

@@ -1,16 +1,16 @@
-// Part 08 — security: port security, ACLs, NAT/PAT (Lab 4)
+// Part 08 — security: port security, ACLs, NAT/PAT (Lab 6)
 const section = {
   num: '08', short: 'Security & NAT', icon: 'FaShieldAlt',
   title: 'How to secure switches and routers',
-  desc: 'Allow only known devices on switch ports, filter traffic with ACLs, and share one public address with NAT. (Lab 4)',
+  desc: 'Allow only known devices on switch ports, filter traffic with ACLs, and share one public address with NAT. (Lab 6)',
   items: ['set up the security lab', 'lock switch ports', 'understand ACL rules', 'write standard and extended ACLs', 'test and read an ACL', 'configure PAT and static NAT'],
-  notes: 'Lab 4 implements a written policy. Read the policy with the class first and ask which tool enforces each line: port security, a standard ACL on the VTY lines, an extended ACL, PAT, static NAT.',
+  notes: 'Lab 6 implements a written policy. Read the policy with the class first and ask which tool enforces each line: port security, a standard ACL on the VTY lines, an extended ACL, PAT, static NAT.',
 };
 
 const slides = [
   {
-    title: 'How to set up the security lab (Lab 4 topology)',
-    tag: 'LAB 4',
+    title: 'How to set up the security lab (Lab 6 topology)',
+    tag: 'LAB 6',
     goal: 'One router joins the STAFF LAN, the STUDENT LAN and the ISP. A written policy says who may reach what.',
     async render(s, { K, P }) {
       const ISP = [3.9, 2.05], NET = [6.0, 2.05], R1 = [3.9, 3.4], S1 = [2.0, 4.6], S2 = [5.8, 4.6];
@@ -48,7 +48,7 @@ const slides = [
     notes: 'The ISP link is a /29 so that the static NAT address 203.0.113.5 sits in the same subnet as R1’s outside interface — the ISP router then reaches it without extra routes. G0/0/2 on a 4331 needs a GLC-T module.',
   },
   {
-    type: 'command', tag: 'LAB 4',
+    type: 'command', tag: 'LAB 6',
     title: 'How to lock switch ports with port security',
     goal: 'Only the registered PC may use each staff port. Any other device shuts the port down.',
     device: 'S1',
@@ -103,7 +103,7 @@ const slides = [
     notes: 'Walk a few packets through the flow chart. The order trap: a broad deny above a specific permit blocks everything the permit was meant to allow.',
   },
   {
-    type: 'command', tag: 'LAB 4',
+    type: 'command', tag: 'LAB 6',
     title: 'How to let only the admin PC manage the router',
     goal: 'A standard ACL on the VTY lines: only ADMIN-PC (192.168.10.10) may open an SSH session to R1.',
     device: 'R1',
@@ -118,7 +118,7 @@ const slides = [
     notes: 'SSH must already be configured on R1 (part 03). This is the “standard ACL near the destination” rule in action: the destination is R1 itself.',
   },
   {
-    type: 'command', tag: 'LAB 4',
+    type: 'command', tag: 'LAB 6',
     title: 'How to filter traffic with an extended named ACL',
     goal: 'Students may open the intranet web server, but nothing else in the STAFF LAN. Everything else is allowed.',
     device: 'R1',
@@ -136,7 +136,7 @@ const slides = [
   },
   {
     title: 'How to test and read an ACL',
-    tag: 'LAB 4',
+    tag: 'LAB 6',
     goal: 'Prove the policy with planned tests, then read the match counters to see which line caught each packet.',
     async render(s, { K, P }) {
       K.terminal(s, {
@@ -154,7 +154,7 @@ const slides = [
     notes: 'ACLs are stateless: the reply from STU-PC1 enters G0/0/1 and is checked like any other packet, so line 20 drops it. Ask the class how they would allow staff to ping students (permit icmp echo-reply before line 20).',
   },
   {
-    type: 'command', tag: 'LAB 4',
+    type: 'command', tag: 'LAB 6',
     title: 'How to share one public address with PAT',
     goal: 'All inside PCs reach the Internet through R1’s single public address, told apart by port numbers (NAT overload).',
     device: 'R1',
@@ -171,7 +171,7 @@ const slides = [
   },
   {
     title: 'How to publish an internal server with static NAT',
-    tag: 'LAB 4',
+    tag: 'LAB 6',
     goal: 'A permanent one-to-one mapping lets Internet users reach the internal web server at a public address.',
     async render(s, { K, P }) {
       K.commandTable(s, {

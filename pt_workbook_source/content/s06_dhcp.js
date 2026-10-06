@@ -2,9 +2,9 @@
 const section = {
   num: '06', short: 'DHCP', icon: 'FaAddressCard',
   title: 'How to hand out IP addresses automatically with DHCP',
-  desc: 'Let the router lease addresses, masks, gateways and DNS servers to every PC — for one LAN, for every VLAN, and across subnets with a relay.',
+  desc: 'Let the router lease addresses, masks, gateways and DNS servers to every PC — for one LAN, for every VLAN, and across subnets with a relay. (Lab 4, built on the Lab 2 file)',
   items: ['understand the DORA conversation', 'make a router a DHCP server', 'give every VLAN its own pool', 'check the leases', 'relay DHCP to a server', 'fix common DHCP problems'],
-  notes: 'Uses the Lab 2 file plus a server LAN on R1 G0/0/0 (192.168.50.0/24: SRV1 = 192.168.50.10 for DNS/web, SRV2 = 192.168.50.11 for DHCP) and a LIBRARY LAN on R1 G0/0/2 (192.168.40.0/24). On a 4331, G0/0/2 needs a GLC-T module first.',
+  notes: 'Lab 4 here builds on the Lab 2 file: add a server LAN on R1 G0/0/0 (192.168.50.0/24: SRV1 = 192.168.50.10 for DNS/web, SRV2 = 192.168.50.11 for DHCP) and a LIBRARY LAN on R1 G0/0/2 (192.168.40.0/24). On a 4331, G0/0/2 needs a GLC-T module first.',
 };
 
 const slides = [
@@ -37,7 +37,7 @@ const slides = [
     notes: 'Watch DORA in Simulation mode: filter DHCP only, set a PC to DHCP, and step through the four messages. Ask why Discover and Request are broadcasts (the PC has no address and does not know the server yet).',
   },
   {
-    type: 'command', tag: 'LAB 2',
+    type: 'command', tag: 'LAB 4',
     title: 'How to configure a router as a DHCP server (1 of 2)',
     goal: 'R1 will lease addresses to the STAFF PCs in VLAN 10 (192.168.10.0/24), keeping .1–.20 for static devices.',
     device: 'R1',
@@ -53,7 +53,7 @@ const slides = [
     notes: 'Stress the order: exclusions first, then the pool. If the pool exists first, a PC may lease an address that you meant to give a printer.',
   },
   {
-    type: 'command', tag: 'LAB 2',
+    type: 'command', tag: 'LAB 4',
     title: 'How to configure a router as a DHCP server (2 of 2)',
     goal: 'Finish the pool, then switch the PCs to DHCP and check that they lease their addresses.',
     device: 'R1',
@@ -69,7 +69,7 @@ const slides = [
     notes: 'If a PC keeps “Requesting IP address”, check the VLAN of its switch port and the trunk to R1 — the DHCP request has to reach the right sub-interface.',
   },
   {
-    type: 'command', tag: 'LAB 2',
+    type: 'command', tag: 'LAB 4',
     title: 'How to give every VLAN its own DHCP pool',
     goal: 'One router can serve every VLAN. It picks the pool whose network matches the sub-interface the request came in on.',
     device: 'R1',
@@ -84,7 +84,7 @@ const slides = [
   },
   {
     title: 'How to check DHCP leases on the router and the PC',
-    tag: 'LAB 2',
+    tag: 'LAB 4',
     goal: 'Match what the router handed out with what the PC received. The MAC address links the two.',
     async render(s, { K, P }) {
       K.terminal(s, {
@@ -106,6 +106,7 @@ const slides = [
   },
   {
     title: 'How to relay DHCP from another subnet (ip helper-address)',
+    tag: 'LAB 4',
     goal: 'The LIBRARY LAN (192.168.40.0/24) gets its addresses from SRV2, a DHCP server in another subnet.',
     async render(s, { K, P }) {
       const y = 2.6, pc = 1.2, r = 6.2, sv = 11.3;

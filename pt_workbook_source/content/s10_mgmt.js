@@ -2,14 +2,14 @@
 const section = {
   num: '10', short: 'Management & IPv6', icon: 'FaServer',
   title: 'How to manage devices and add IPv6',
-  desc: 'Keep every device on the same clock, send logs to a server, discover neighbours, back up configurations — and switch on IPv6.',
+  desc: 'Keep every device on the same clock, send logs to a server, discover neighbours, back up configurations — and switch on IPv6. (Labs 9 and 10)',
   items: ['set the time and send logs (NTP, Syslog)', 'discover neighbours and allow monitoring (CDP, LLDP, SNMP)', 'back up and restore with TFTP', 'configure basic IPv6 addressing and routing'],
-  notes: 'Use the Lab 2/DHCP file with SRV1 (192.168.50.10) on the server LAN: switch on its NTP, SYSLOG and TFTP services first. IPv6 uses a separate two-router file (R1–R2 with one LAN each).',
+  notes: 'Lab 9 uses the Lab 4 (DHCP) file with SRV1 (192.168.50.10) on the server LAN: switch on its NTP, SYSLOG and TFTP services first. Lab 10 (IPv6) uses a separate two-router file (R1–R2 with one LAN each).',
 };
 
 const slides = [
   {
-    type: 'command',
+    type: 'command', tag: 'LAB 9',
     title: 'How to set the time and send logs to a server',
     goal: 'Logs are only useful if every device has the right time and sends its messages to one place.',
     device: 'R1',
@@ -25,7 +25,7 @@ const slides = [
     notes: 'NTP can take a minute to synchronise — use Fast Forward Time. Generate a log message on purpose (shut and no shut an interface) and find it on SRV1 with the correct timestamp.',
   },
   {
-    type: 'command',
+    type: 'command', tag: 'LAB 9',
     title: 'How to discover neighbours and allow monitoring',
     goal: 'CDP and LLDP show who is connected where; SNMP lets a monitoring tool read each device’s status.',
     device: 'R1',
@@ -42,6 +42,7 @@ const slides = [
   },
   {
     title: 'How to back up and restore a configuration with TFTP',
+    tag: 'LAB 9',
     goal: 'Keep a copy of every configuration on a server, so a replaced or broken router is restored in minutes.',
     async render(s, { K, P }) {
       K.terminal(s, {
@@ -74,7 +75,7 @@ const slides = [
     notes: 'A restore merges the file into the running-config; then save it with copy running-config startup-config. Good file names (device + date) make it easy to roll back to a known good version.',
   },
   {
-    type: 'command',
+    type: 'command', tag: 'LAB 10',
     title: 'How to configure basic IPv6 on a router (1 of 2)',
     goal: 'Give R1’s ports IPv6 addresses and turn on IPv6 routing, so PCs can configure themselves (SLAAC).',
     device: 'R1',
@@ -91,7 +92,7 @@ const slides = [
     notes: 'IPv4 and IPv6 can run on the same ports at the same time (dual stack). Remind trainees that IPv6 never uses broadcasts — Router Advertisements are multicasts.',
   },
   {
-    type: 'command',
+    type: 'command', tag: 'LAB 10',
     title: 'How to configure basic IPv6 on a router (2 of 2)',
     goal: 'Add routes between the IPv6 LANs, let the PCs configure themselves, and test end to end.',
     device: 'R1 / R2 / PC1',

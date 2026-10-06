@@ -4,7 +4,7 @@ const section = {
   title: 'How to separate a network with VLANs',
   desc: 'Split one switched network into departments — STAFF, STUDENTS, FINANCE — and carry them all between switches over trunks. (Lab 2)',
   items: ['understand VLANs before you configure', 'plan the VLAN lab', 'create and name VLANs', 'put ports into VLANs', 'configure trunk links', 'manage a switch through VLAN 99', 'check VLANs and trunks', 'change VLANs safely'],
-  notes: 'Lab 2 runs through parts 04, 05 and 06: VLANs and trunks first, then router-on-a-stick, then DHCP for each VLAN. Keep the same .pkt file and save a copy after each part.',
+  notes: 'Lab 2 runs through parts 04 and 05: VLANs and trunks first, then router-on-a-stick. Part 06 (Lab 4) adds DHCP to the same file. Save a copy of the .pkt after each part.',
 };
 
 const VC = (P) => ({ 10: P.v10, 20: P.v20, 30: P.v30, 99: P.v99 });

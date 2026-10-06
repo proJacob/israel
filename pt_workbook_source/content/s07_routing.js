@@ -119,7 +119,7 @@ const slides = [
     ],
     check: 'From a PC, `tracert` to an Internet server: the trace passes R1 and then the ISP router.',
     watch: 'Point the default route only at the real exit. Two routers defaulting to each other bounce packets until they expire.',
-    notes: 'The ISP link appears in Lab 4 (part 08) and in Challenge lab B. In Lab 3, try the branch idea: replace R2’s static routes with one default route to R1.',
+    notes: 'The ISP link appears in Lab 6 (part 08) and in Challenge lab B. In Lab 3, try the branch idea: replace R2’s static routes with one default route to R1.',
   },
   {
     type: 'command', tag: 'LAB 3',

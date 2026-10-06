@@ -1,16 +1,16 @@
-// Part 09 — STP and EtherChannel (Lab 5)
+// Part 09 — STP and EtherChannel (Lab 7)
 const section = {
   num: '09', short: 'STP & EtherChannel', icon: 'FaProjectDiagram',
   title: 'How to add redundancy without loops',
-  desc: 'Extra links between switches keep users online when a cable fails — if Spanning Tree controls them. EtherChannel turns parallel links into one. (Lab 5)',
+  desc: 'Extra links between switches keep users online when a cable fails — if Spanning Tree controls them. EtherChannel turns parallel links into one. (Lab 7)',
   items: ['understand Spanning Tree and the lab', 'choose the root bridge, PortFast and BPDU Guard', 'read show spanning-tree', 'bundle links with LACP EtherChannel'],
-  notes: 'Lab 5: three 2960 switches in a triangle (cross-over cables), S1–S2 joined by two links that become an EtherChannel. PC1 on S3 Fa0/10 and PC2 on S1 Fa0/10, both in VLAN 10. All inter-switch links are trunks.',
+  notes: 'Lab 7: three 2960 switches in a triangle (cross-over cables), S1–S2 joined by two links that become an EtherChannel. PC1 on S3 Fa0/10 and PC2 on S1 Fa0/10, both in VLAN 10. All inter-switch links are trunks.',
 };
 
 const slides = [
   {
     title: 'How to understand Spanning Tree before you configure it',
-    tag: 'LAB 5',
+    tag: 'LAB 7',
     goal: 'Redundant links are good for uptime but create loops. Spanning Tree keeps one path active and the others on standby.',
     async render(s, { K, P }) {
       K.card(s, {
@@ -48,7 +48,7 @@ const slides = [
     notes: 'Demonstrate a broadcast storm only in theory — in Packet Tracer STP is on by default, which is why some ports show amber for about 30 seconds when you connect them. Ask: which port would you block to break the triangle? STP decides it for you.',
   },
   {
-    type: 'command', tag: 'LAB 5',
+    type: 'command', tag: 'LAB 7',
     title: 'How to set the root bridge, PortFast and BPDU Guard',
     goal: 'Choose the centre of the network yourself, start PC ports instantly, and protect them from rogue switches.',
     device: 'S1 / S2 / S3',
@@ -65,7 +65,7 @@ const slides = [
   },
   {
     title: 'How to read show spanning-tree',
-    tag: 'LAB 5',
+    tag: 'LAB 7',
     goal: 'Find the root, the blocked port and the edge port from one output — then prove that failover works.',
     async render(s, { K, P }) {
       K.terminal(s, {
@@ -100,7 +100,7 @@ const slides = [
     notes: 'During the failover test, Fa0/4 changes from Altn BLK to Root FWD and only 1–3 replies are lost. Stop ping -t with Ctrl+C. Repeat the test with classic STP (spanning-tree mode pvst) to compare recovery time.',
   },
   {
-    type: 'command', tag: 'LAB 5',
+    type: 'command', tag: 'LAB 7',
     title: 'How to bundle links with an LACP EtherChannel',
     goal: 'Join the two S1–S2 links into one logical link: double the bandwidth, and STP blocks neither of them.',
     device: 'S1',
